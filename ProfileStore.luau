@@ -715,11 +715,6 @@ local function SaveProfileAsync(profile, is_ending_session, is_overwriting, last
 	profile.OnSave:Fire()
 	if is_ending_session == true then
 		profile.OnLastSave:Fire(last_save_reason or "Manual")
-
-		local profileKey = profile.Key
-		while (not ProfileStore.LastSaveComplete[profileKey]) do
-			task.wait();
-		end
 	end
 
 	if is_ending_session == true and is_overwriting ~= true then
@@ -1196,7 +1191,7 @@ function Profile:Save()
 end
 
 local ProfileStore: ProfileStoreModule = {
-	LastSaveComplete = {}, -- [profile_key] = true/false
+
 	IsClosing = false,
 	IsCriticalState = false,
 	OnError = OnError, -- (message, store_name, profile_key)
@@ -1206,10 +1201,6 @@ local ProfileStore: ProfileStoreModule = {
 
 }
 ProfileStore.__index = ProfileStore
-
-function ProfileStore.MarkLastSaveComplete(profileKey)
-	ProfileStore.LastSaveComplete[profileKey] = true
-end
 
 function ProfileStore.SetConstant(name, value)
 
